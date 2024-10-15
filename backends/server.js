@@ -9,7 +9,8 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/links", router);
+// app.use("/links", router);
+app.use("/", router);
 app.use(errorHandler);
 
 app.listen(port, () => {
@@ -26,3 +27,5 @@ app.listen(port, () => {
 // url.route.js
 
 // abcdefg |  /z
+
+// http://localhost:5000/links
