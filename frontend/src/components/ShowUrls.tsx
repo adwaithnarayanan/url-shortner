@@ -1,5 +1,61 @@
+import Button from "./Button";
+import { FormEvent, useContext } from "react";
+import { deleteUrl, editUrl, getAllUrls } from "../../API.ts";
+import { UrlType } from "../../types.ts";
+import Table from "./Table.tsx";
+import { UrlContext } from "../App.tsx";
+
 const ShowUrls = () => {
-  return <div>ShowUrls</div>;
+  const { urls, setUrls } = useContext(UrlContext);
+
+  // const [urls, setUrls] = useState([] as UrlType[]);
+  //
+  const displayUrls = async () => {
+    const data = await getAllUrls();
+    setUrls(data.data.map((url: UrlType[]) => ({ ...url, edit: false })));
+  };
+
+  async function handleEditUrl(e: FormEvent, id: number, encodedUrl: string) {
+    e.preventDefault();
+
+    const response = await editUrl({ id: id, newShortUrl: encodedUrl });
+    console.log("front edit", response);
+    await displayUrls();
+  }
+
+  const handleDeleteUrl = async (id: number) => {
+    const response = await deleteUrl({ id });
+    console.log("resss", response);
+    await displayUrls();
+  };
+
+  const handleEnableEditUrl = (id: number) => {
+    setUrls((prevUrls) =>
+      prevUrls.map((prevUrl) =>
+        prevUrl.id === id
+          ? { ...prevUrl, edit: !prevUrl.edit }
+          : { ...prevUrl, edit: false }
+      )
+    );
+  };
+
+  return (
+    <div className="flex flex-col items-center">
+      <Button handleClick={displayUrls} type="showUrls">
+        Show Urls
+      </Button>
+      <div>
+        {urls.length > 0 && (
+          <Table
+            urls={urls}
+            handleDeleteUrl={handleDeleteUrl}
+            handleEditUrl={handleEditUrl}
+            handleEnableEditUrl={handleEnableEditUrl}
+          />
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default ShowUrls;

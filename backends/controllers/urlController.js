@@ -46,7 +46,7 @@ const editUrl = async (req, res) => {
 
   const response = await editUrlFromDb({ id, newShortenedUrl });
 
-  res.status(response.status).json(response);
+  res.status(200).json(response);
 };
 
 //@desc delete url

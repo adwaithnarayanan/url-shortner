@@ -6,7 +6,6 @@ import {
   getUrl,
   getUrls,
 } from "../controllers/urlController.js";
-import { getLink } from "../database/table.js";
 const router = express.Router();
 
 router.route("/links/").get(getUrls).post(createUrl);

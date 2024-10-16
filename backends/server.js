@@ -2,14 +2,15 @@ import express from "express";
 import dotenv from "dotenv";
 import { router } from "./routes/url.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+import cors from "cors";
 
 const app = express();
+app.use(cors());
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use("/links", router);
 app.use("/", router);
 app.use(errorHandler);
 
@@ -19,13 +20,4 @@ app.listen(port, () => {
 
 // // Requirements
 
-// url create /url
-// /url/create  - create an entry in db
-// /url/update  - edit the entry in db
-// /url/delete   - remove the url from db
-// /utl/get - send all url as response
-// url.route.js
-
-// abcdefg |  /z
-
-// http://localhost:5000/links
+// http://localhost:8000/links

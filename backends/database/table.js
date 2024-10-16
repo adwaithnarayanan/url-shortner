@@ -8,9 +8,9 @@ db.run(
   `SELECT 1 FROM sqlite_master WHERE type='database' AND name='url.db'`,
   (err) => {
     if (err) {
-      console.log("Database does not exist");
+      console.log("Database does not exist", err);
     } else {
-      console.log("Database exists");
+      // console.log("Database exists");
     }
   }
 );
@@ -19,17 +19,17 @@ db.run(
   `SELECT 1 FROM sqlite_master WHERE type='table' AND name='urls'`,
   (err) => {
     if (err) {
-      console.log("Table does not exist");
-      const sql = `CREATE TABLE urls(id INTEGER PRIMARY KEY, encodedUrl UNIQUE , fullUrl , created_at DATETIME DEFAULT CURRENT_TIMESTAMP)`;
+      console.log("Table does not exist", err);
+      const sql = `CREATE TABLE urls(id INTEGER PRIMARY KEY, encodedUrl UNIQUE, encodedLink UNIQUE , fullUrl , created_at DATETIME DEFAULT CURRENT_TIMESTAMP)`;
       db.run(sql);
-      console.log("Table created successfully");
+      // console.log("Table created successfully");
     } else {
-      console.log("Table exists");
+      // console.log("Table exists");
     }
   }
 );
 
-// const sql = `CREATE TABLE urls(id INTEGER PRIMARY KEY, encodedUrl UNIQUE , fullUrl , created_at DATETIME DEFAULT CURRENT_TIMESTAMP)`;
+// const sql = `CREATE TABLE urls(id INTEGER PRIMARY KEY, encodedUrl UNIQUE, encodedLink UNIQUE , fullUrl , created_at DATETIME DEFAULT CURRENT_TIMESTAMP)`;
 // db.run(sql);
 
 // Retrieve all rows from table
@@ -60,17 +60,22 @@ async function insertIntoDB({ res, fullUrl }) {
   const isFullUrl = await isFullUrlPresent({ fullUrl });
 
   if (!isShortened && !isFullUrl) {
-    const query = `INSERT INTO urls(encodedUrl, fullUrl) VALUES(?,?)`;
+    const query = `INSERT INTO urls(encodedUrl, encodedLink, fullUrl) VALUES(?,?,?)`;
 
     const value = await new Promise((resolve) => {
-      db.run(query, [shortenedUrl, fullUrl], (err) => {
-        if (err) {
-          return { status: 403, success: false, error: err };
-        } else {
-          console.log("Successfully inserted into db", shortenedUrl, fullUrl);
-          resolve(true);
+      db.run(
+        query,
+        [shortenedUrl, `http://localhost:8000/${shortenedUrl}`, fullUrl],
+        (err, row) => {
+          if (err) {
+            return { status: 403, success: false, error: err };
+          } else {
+            console.log("Successfully inserted into db", shortenedUrl, fullUrl);
+
+            resolve(true);
+          }
         }
-      });
+      );
     });
 
     return (
@@ -106,25 +111,29 @@ async function getLink({ encodedUrl }) {
 
 async function editUrlFromDb({ id, newShortenedUrl }) {
   const checkPresent = await isPresent({ shortenedUrl: newShortenedUrl });
+  console.log("isPRsent", checkPresent);
 
   if (!checkPresent) {
-    const query = `UPDATE urls SET encodedUrl=? WHERE id=?`;
+    const query = `UPDATE urls SET encodedUrl=?, encodedLink=? WHERE id=?`;
 
     const value = await new Promise((resolve) => {
-      db.run(query, [newShortenedUrl, id], (err) => {
-        if (err) {
-          resolve({ status: 403, message: err, success: false });
+      db.run(
+        query,
+        [newShortenedUrl, `http://localhost:8000/${newShortenedUrl}`, id],
+        (err) => {
+          if (err) {
+            resolve({ status: 403, message: err, success: false });
+          }
+          resolve({
+            status: 200,
+            message: "Successfully updated URL",
+            success: true,
+          });
         }
-        resolve({
-          status: 200,
-          message: "Successfully updated URL",
-          success: true,
-        });
-      });
+      );
     });
 
     // return { status: 200, success: true, error: "Edited url successfully" };
-
     return value;
   }
 

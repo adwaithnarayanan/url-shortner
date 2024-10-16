@@ -1,26 +1,36 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import Button from "./Button";
+import { generateShortUrl, getAllUrls } from "../../API";
+import { UrlContext } from "../App";
+import { UrlType } from "../../types";
 
 const CreateUrl = () => {
+  const { setUrls } = useContext(UrlContext);
+
   const [fullUrl, setFullUrl] = useState("");
 
-  function handleFormSubmit(event: FormEvent) {
+  async function handleFormSubmit(event: FormEvent) {
     event.preventDefault();
+    await generateShortUrl({ fullUrl: fullUrl.trim() });
 
-    console.log("form submnitted");
+    const data = await getAllUrls();
+    setUrls(data.data.map((url: UrlType[]) => ({ ...url, edit: false })));
   }
 
   return (
     <div className="w-full flex justify-center py-9">
       <form
         onSubmit={handleFormSubmit}
-        className="flex flex-col w-full max-w-[40%] shadow-md px-5 py-8 bg-four "
+        className="flex flex-col w-full max-w-[40%] shadow-lg px-5 py-8 bg-four items-center"
       >
+        <h2 className="uppercase text-xl font-semibold text-primary my-2 w-full text-center">
+          URL Shortner
+        </h2>
         <input
-          type="text"
+          type="url"
           value={fullUrl}
           onChange={(e) => setFullUrl(e.target.value)}
-          className="border mb-3 px-3 py-1 bg-transparent shadow-md focus:outline-2 focus:outline-three"
+          className="border mb-3 px-3 py-1 bg-transparent shadow-lg focus:outline-2 focus:outline-three w-full"
           placeholder="Enter your link here..."
         />
         <Button type="submit">Get link</Button>
