@@ -1,5 +1,5 @@
 import sqlite from "sqlite3";
-import { generateURl } from "../controllers/urlShortner.js";
+import { generateURl } from "../services/urlShortner.js";
 
 const db = new sqlite.Database("url.db", { verbose: true });
 
@@ -53,8 +53,8 @@ async function getAllUrls({ res }) {
 }
 
 // INSERT fullUrl and shortened url into db
-async function insertIntoDB({ res, fullUrl }) {
-  const shortenedUrl = generateURl();
+async function insertIntoDB({ fullUrl, urlLength }) {
+  const shortenedUrl = generateURl({ urlLength });
 
   const isShortened = await isPresent({ shortenedUrl });
   const isFullUrl = await isFullUrlPresent({ fullUrl });
@@ -66,7 +66,7 @@ async function insertIntoDB({ res, fullUrl }) {
       db.run(
         query,
         [shortenedUrl, `http://localhost:8000/${shortenedUrl}`, fullUrl],
-        (err, row) => {
+        (err) => {
           if (err) {
             return { status: 403, success: false, error: err };
           } else {
@@ -82,7 +82,7 @@ async function insertIntoDB({ res, fullUrl }) {
       value && {
         status: 200,
         success: true,
-        message: "Successfully inserted into db",
+        message: "Successfully added URL",
       }
     );
   } else if (isShortened) {
@@ -109,17 +109,19 @@ async function getLink({ encodedUrl }) {
   return { message: "success", status: 200, data: value.fullUrl };
 }
 
-async function editUrlFromDb({ id, newShortenedUrl }) {
-  const checkPresent = await isPresent({ shortenedUrl: newShortenedUrl });
-  console.log("isPRsent", checkPresent);
+async function editUrlFromDb({ id, newFullUrl }) {
+  // const checkPresent = await isPresent({ shortenedUrl: newShortenedUrl });
+  const checkPresent = await isFullUrlPresent({ fullUrl: newFullUrl });
+  console.log("isPresnt full url ** ", checkPresent);
 
   if (!checkPresent) {
-    const query = `UPDATE urls SET encodedUrl=?, encodedLink=? WHERE id=?`;
+    const query = `UPDATE urls SET fullUrl=? WHERE id=?`;
 
     const value = await new Promise((resolve) => {
       db.run(
         query,
-        [newShortenedUrl, `http://localhost:8000/${newShortenedUrl}`, id],
+        // [newShortenedUrl, `http://localhost:8000/${newShortenedUrl}`, id],
+        [newFullUrl, id],
         (err) => {
           if (err) {
             resolve({ status: 403, message: err, success: false });
@@ -133,7 +135,6 @@ async function editUrlFromDb({ id, newShortenedUrl }) {
       );
     });
 
-    // return { status: 200, success: true, error: "Edited url successfully" };
     return value;
   }
 
@@ -143,15 +144,19 @@ async function editUrlFromDb({ id, newShortenedUrl }) {
 async function deleteFromDb({ id }) {
   const query = `DELETE FROM urls WHERE id=?`;
 
-  await new Promise((resolve) => {
+  const value = await new Promise((resolve) => {
     db.run(query, [id], (err) => {
       if (err) {
         return { status: 403, success: false, error: err };
       }
-      resolve("success");
-      return { status: 200, success: true, message: "Successfully deleted" };
+      resolve({
+        status: 200,
+        success: true,
+        message: "Successfully deleted URL",
+      });
     });
   });
+  return value;
 }
 
 // check whether the shortened url is present in db

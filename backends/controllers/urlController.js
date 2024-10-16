@@ -1,3 +1,4 @@
+import asyncHandler from "express-async-handler";
 import validUrl from "valid-url";
 import {
   deleteFromDb,
@@ -10,19 +11,19 @@ import {
 //@desc Get all urls
 //@route GET /links
 //@access public
-const getUrls = async (req, res) => {
+const getUrls = asyncHandler(async (req, res) => {
   const response = await getAllUrls({ res });
   res.status(response.status).json(response);
-};
+});
 
 //@desc create url
 //@route POST /links
 //@access public
-const createUrl = async (req, res) => {
-  const { url } = req.body;
+const createUrl = asyncHandler(async (req, res) => {
+  const { url, urlLength } = req.body;
 
   if (!url) {
-    res.status(404);
+    res.status(403);
     throw new Error(`URL is mandatory`);
   }
 
@@ -32,37 +33,51 @@ const createUrl = async (req, res) => {
     throw new Error(`Provided is not a valid URL`);
   }
 
-  const response = await insertIntoDB({ res, fullUrl: req.body.url });
+  // Check whether given url length is greater than 3
+  if (Number(urlLength) < 3) {
+    res.status(400);
+    throw new Error(`Please provide minimum url length of 3 characters`);
+  }
 
-  res.status(response.status).json({ message: response.message });
-};
+  const response = await insertIntoDB({
+    fullUrl: url,
+    urlLength: urlLength,
+  });
+
+  res.status(response.status).json(response);
+});
 
 //@desc edit url
 //@route PUT /links/:id
 //@access public
-const editUrl = async (req, res) => {
+const editUrl = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const newShortenedUrl = req.body.url;
+  const newFullUrl = req.body.url;
 
-  const response = await editUrlFromDb({ id, newShortenedUrl });
+  if (!validUrl.isUri(newFullUrl)) {
+    res.status(400);
+    throw new Error(`Provided is not a valid url`);
+  }
+
+  const response = await editUrlFromDb({ id, newFullUrl });
 
   res.status(200).json(response);
-};
+});
 
 //@desc delete url
 //@route DELETE /links/:id
 //@access public
-const deleteUrl = async (req, res) => {
+const deleteUrl = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  await deleteFromDb({ id });
+  const response = await deleteFromDb({ id });
 
-  res.status(200).json({ message: `Successfully deleted URL` });
-};
+  res.status(response.status).json(response);
+});
 
 //@desc get url
 //@route GET /:id
 //@access public
-const getUrl = async (req, res) => {
+const getUrl = asyncHandler(async (req, res) => {
   const encodedUrl = req.params.id;
   const response = await getLink({ encodedUrl });
 
@@ -71,6 +86,6 @@ const getUrl = async (req, res) => {
   } else {
     res.status(404).json({ message: "URL not found" });
   }
-};
+});
 
 export { getUrls, createUrl, editUrl, deleteUrl, getUrl };
