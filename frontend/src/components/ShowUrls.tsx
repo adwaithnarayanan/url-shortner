@@ -1,5 +1,5 @@
 import Button from "./Button";
-import { FormEvent, useContext } from "react";
+import { FormEvent, useContext, useEffect } from "react";
 import { deleteUrl, editUrl, getAllUrls } from "../../API.ts";
 import { UrlType } from "../../types.ts";
 import Table from "./Table.tsx";
@@ -39,11 +39,15 @@ const ShowUrls = () => {
     );
   };
 
+  useEffect(() => {
+    displayUrls();
+  }, []);
+
   return (
-    <div className="flex flex-col items-center">
-      <Button handleClick={displayUrls} type="showUrls">
+    <div className="flex flex-col items-center mt-10 shadow-lg p-3 rounded-md">
+      {/* <Button handleClick={displayUrls} type="showUrls">
         Show Urls
-      </Button>
+      </Button> */}
       <div>
         {urls.length > 0 && (
           <Table

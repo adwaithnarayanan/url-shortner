@@ -18,11 +18,12 @@ const Table = ({
   handleEnableEditUrl,
 }: TablePropType) => {
   const [newShortUrl, setNewShortUrl] = useState("");
+  const [newFullUrl, setNewFullUrl] = useState("");
 
   const handleEdit = (id: number) => {
-    const myurl = urls.find((url) => url.id === id);
+    const currentUrl = urls.find((url) => url.id === id);
 
-    setNewShortUrl(myurl?.encodedUrl!);
+    setNewFullUrl(currentUrl?.fullUrl!);
     handleEnableEditUrl(id);
   };
 
@@ -43,27 +44,27 @@ const Table = ({
             className={`text-center ${url.id % 2 === 0 && "bg-tableBg"}`}
           >
             <td className="rounded-l-lg ">
+              <a
+                href={url.encodedLink}
+                className="hover:text-blue-500 hover:underline text-[15px]"
+              >
+                {url.encodedLink}
+              </a>
+            </td>
+            <td>
               {url.edit ? (
-                <span className="flex text-[15px] items-center">
-                  {url.encodedLink.split("/").slice(0, 3).join("/") + "/"}
-                  <form onSubmit={(e) => handleEditUrl(e, url.id, newShortUrl)}>
-                    <input
-                      value={newShortUrl}
-                      onChange={(e) => setNewShortUrl(e.target.value)}
-                      className="min-w-[100px] w-0 border-2 border-primary focus:outline-2 focus:outline-primary text-[15px] bg-[rgba(255,255,255,0.3)] rounded-sm"
-                    />
-                  </form>
-                </span>
+                <form onSubmit={(e) => handleEditUrl(e, url.id, newFullUrl)}>
+                  <input
+                    type="url"
+                    value={newFullUrl}
+                    onChange={(e) => setNewFullUrl(e.target.value)}
+                    className="w-ful border-2 border-primary focus:outline-2 focus:outline-primary text-[15px] bg-[rgba(255,255,255,0.3)] rounded-sm"
+                  />
+                </form>
               ) : (
-                <a
-                  href={url.encodedLink}
-                  className="hover:text-blue-500 hover:underline text-[15px]"
-                >
-                  {url.encodedLink}
-                </a>
+                <span>{url.fullUrl}</span>
               )}
             </td>
-            <td>{url.fullUrl}</td>
             <td className="py-1.5">
               <Button
                 // handleClick={() => handleEditUrl(url.id, url.encodedUrl)}

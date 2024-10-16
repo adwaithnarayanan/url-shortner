@@ -11,10 +11,16 @@ export const getAllUrls = async () => {
   return urls;
 };
 
-export const generateShortUrl = async ({ fullUrl }: { fullUrl: string }) => {
+export const generateShortUrl = async ({
+  fullUrl,
+  urlLength,
+}: {
+  fullUrl: string;
+  urlLength: string;
+}) => {
   console.log(fullUrl);
   const response = await axios
-    .post(API_URL + "links/", { url: fullUrl })
+    .post(API_URL + "links/", { url: fullUrl, urlLength: urlLength })
     .then((response) => response.data);
 
   console.log("!@# ", response);

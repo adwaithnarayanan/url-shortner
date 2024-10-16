@@ -1,20 +1,17 @@
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent, useState } from "react";
 import Button from "./Button";
-import { generateShortUrl, getAllUrls } from "../../API";
-import { UrlContext } from "../App";
-import { UrlType } from "../../types";
+import { generateShortUrl } from "../../API";
 
 const CreateUrl = () => {
-  const { setUrls } = useContext(UrlContext);
-
   const [fullUrl, setFullUrl] = useState("");
+  const [encodedLength, setEncodedLength] = useState("");
 
   async function handleFormSubmit(event: FormEvent) {
     event.preventDefault();
-    await generateShortUrl({ fullUrl: fullUrl.trim() });
-
-    const data = await getAllUrls();
-    setUrls(data.data.map((url: UrlType[]) => ({ ...url, edit: false })));
+    await generateShortUrl({
+      fullUrl: fullUrl.trim(),
+      urlLength: encodedLength.trim(),
+    });
   }
 
   return (
@@ -26,13 +23,26 @@ const CreateUrl = () => {
         <h2 className="uppercase text-xl font-semibold text-primary my-2 w-full text-center">
           URL Shortner
         </h2>
-        <input
-          type="url"
-          value={fullUrl}
-          onChange={(e) => setFullUrl(e.target.value)}
-          className="border mb-3 px-3 py-1 bg-transparent shadow-lg focus:outline-2 focus:outline-three w-full"
-          placeholder="Enter your link here..."
-        />
+        <div className="flex">
+          <input
+            type="url"
+            value={fullUrl}
+            onChange={(e) => setFullUrl(e.target.value)}
+            className="border mb-3 px-3 py-1 bg-transparent shadow-lg focus:outline-2 focus:outline-three w-full"
+            placeholder="Enter your link here..."
+            required
+          />
+          <input
+            type="number"
+            value={encodedLength}
+            onChange={(e) => setEncodedLength(e.target.value)}
+            min={3}
+            placeholder="url length"
+            className="border mb-3 px-3 py-1 bg-transparent shadow-lg focus:outline-2 focus:outline-three max-w-[20%]"
+            required
+          />
+        </div>
+
         <Button type="submit">Get link</Button>
       </form>
     </div>
