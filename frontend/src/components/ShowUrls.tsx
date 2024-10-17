@@ -1,4 +1,4 @@
-import Button from "./Button";
+// import Button from "./Button";
 import { FormEvent, useContext, useEffect } from "react";
 import { deleteUrl, editUrl, getAllUrls } from "../../API.ts";
 import { UrlType } from "../../types.ts";
@@ -8,8 +8,6 @@ import { UrlContext } from "../App.tsx";
 const ShowUrls = () => {
   const { urls, setUrls } = useContext(UrlContext);
 
-  // const [urls, setUrls] = useState([] as UrlType[]);
-  //
   const displayUrls = async () => {
     const data = await getAllUrls();
     setUrls(data.data.map((url: UrlType[]) => ({ ...url, edit: false })));
