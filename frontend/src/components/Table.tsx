@@ -17,7 +17,6 @@ const Table = ({
   handleEditUrl,
   handleEnableEditUrl,
 }: TablePropType) => {
-  const [newShortUrl, setNewShortUrl] = useState("");
   const [newFullUrl, setNewFullUrl] = useState("");
 
   const handleEdit = (id: number) => {
@@ -66,11 +65,7 @@ const Table = ({
               )}
             </td>
             <td className="py-1.5">
-              <Button
-                // handleClick={() => handleEditUrl(url.id, url.encodedUrl)}
-                handleClick={() => handleEdit(url.id)}
-                type="edit"
-              >
+              <Button handleClick={() => handleEdit(url.id)} type="edit">
                 <ModeEditOutlinedIcon />
               </Button>
             </td>
