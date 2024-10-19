@@ -10,17 +10,20 @@ import {
 
 //@desc Get all urls
 //@route GET /links
-//@access public
+//@access private
 const getUrls = asyncHandler(async (req, res) => {
-  const response = await getAllUrls({ res });
+  const { user } = req;
+
+  const response = await getAllUrls(user);
   res.status(response.status).json(response);
 });
 
 //@desc create url
 //@route POST /links
-//@access public
+//@access private
 const createUrl = asyncHandler(async (req, res) => {
   const { url, urlLength } = req.body;
+  const user = req.user;
 
   if (!url) {
     res.status(403);
@@ -42,6 +45,7 @@ const createUrl = asyncHandler(async (req, res) => {
   const response = await insertIntoDB({
     fullUrl: url,
     urlLength: urlLength,
+    userId: user.id,
   });
 
   res.status(response.status).json(response);
@@ -49,34 +53,37 @@ const createUrl = asyncHandler(async (req, res) => {
 
 //@desc edit url
 //@route PUT /links/:id
-//@access public
+//@access private
 const editUrl = asyncHandler(async (req, res) => {
   const id = req.params.id;
   const newFullUrl = req.body.url;
+
+  const user = req.user;
 
   if (!validUrl.isUri(newFullUrl)) {
     res.status(400);
     throw new Error(`Provided is not a valid url`);
   }
 
-  const response = await editUrlFromDb({ id, newFullUrl });
+  const response = await editUrlFromDb({ id, newFullUrl, userId: user.id });
 
   res.status(200).json(response);
 });
 
 //@desc delete url
 //@route DELETE /links/:id
-//@access public
+//@access private
 const deleteUrl = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const response = await deleteFromDb({ id });
+  const user = req.user;
+  const response = await deleteFromDb({ id, userId: user.id });
 
   res.status(response.status).json(response);
 });
 
 //@desc get url
 //@route GET /:id
-//@access public
+//@access private
 const getUrl = asyncHandler(async (req, res) => {
   const encodedUrl = req.params.id;
   const response = await getLink({ encodedUrl });

@@ -6,4 +6,6 @@ const constants = {
   SERVER_ERROR: 500,
 };
 
-export { constants };
+const SALT_ROUNDS = 10;
+
+export { constants, SALT_ROUNDS };
