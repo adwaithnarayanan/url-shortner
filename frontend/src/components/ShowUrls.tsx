@@ -4,6 +4,7 @@ import { deleteUrl, editUrl, getAllUrls } from "../../API.ts";
 import { UrlType } from "../../types.ts";
 import Table from "./Table.tsx";
 import { UrlContext } from "../App.tsx";
+import { toast } from "react-toastify";
 
 const ShowUrls = () => {
   const { urls, setUrls } = useContext(UrlContext);
@@ -17,13 +18,28 @@ const ShowUrls = () => {
     e.preventDefault();
 
     const response = await editUrl({ id: id, newShortUrl: encodedUrl });
-    console.log("front edit", response);
+
+    if (response.success) {
+      toast.success(response.message, {
+        position: "bottom-center",
+      });
+    } else {
+      toast.info(response.message, {});
+    }
+
     await displayUrls();
+    console.log("urrlsss edit", urls);
   }
 
   const handleDeleteUrl = async (id: number) => {
     const response = await deleteUrl({ id });
-    console.log("resss", response);
+
+    if (response.success) {
+      toast.success(response.message);
+    } else {
+      toast.info(response.message);
+    }
+
     await displayUrls();
   };
 
@@ -42,21 +58,21 @@ const ShowUrls = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center mt-10 shadow-lg p-3 rounded-md">
-      {/* <Button handleClick={displayUrls} type="showUrls">
+    <>
+      <div className="flex flex-col items-center mt-10 shadow-lg p-3 rounded-md">
+        {/* <Button handleClick={displayUrls} type="showUrls">
         Show Urls
       </Button> */}
-      <div>
-        {urls.length > 0 && (
+        <div>
           <Table
             urls={urls}
             handleDeleteUrl={handleDeleteUrl}
             handleEditUrl={handleEditUrl}
             handleEnableEditUrl={handleEnableEditUrl}
           />
-        )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

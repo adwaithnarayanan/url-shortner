@@ -4,22 +4,39 @@ import ShowUrls from "./components/ShowUrls";
 import { URLContextType, UrlType } from "../types";
 import Navbar from "./components/Navbar";
 import { Route, Routes } from "react-router-dom";
+import { Bounce, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const UrlContext = createContext({} as URLContextType);
 
 function App() {
-  const [urls, setUrls] = useState({} as UrlType[]);
+  const [urls, setUrls] = useState([] as UrlType[]);
+
   return (
     <UrlContext.Provider value={{ urls, setUrls }}>
       <div className="min-h-screen w-full flex flex-col items-center bg-bodyBg">
         <Navbar />
-        {/* <CreateUrl /> */}
-        {/* <ShowUrls /> */}
 
         <Routes>
           <Route path="/" element={<CreateUrl />} />
           <Route path="show-urls" element={<ShowUrls />} />
         </Routes>
+        <div className="absolute bottom-0 right-1/2 translate-x-2/4">
+          <ToastContainer
+            position="bottom-center"
+            autoClose={3000}
+            limit={1}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable={false}
+            pauseOnHover={false}
+            theme="light"
+            transition={Bounce}
+          />
+        </div>
       </div>
     </UrlContext.Provider>
   );

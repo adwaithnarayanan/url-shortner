@@ -41,7 +41,8 @@ async function getAllUrls({ res }) {
       if (err) return { status: 403, message: err };
 
       if (rows.length < 1) {
-        return { status: 403, message: "No match" };
+        // return { status: 403, message: "No match" };
+        resolve([]);
       }
 
       resolve(rows);
@@ -88,7 +89,7 @@ async function insertIntoDB({ fullUrl, urlLength }) {
   } else if (isShortened) {
     generateURl(fullUrl);
   } else if (isFullUrl) {
-    return { status: 403, message: "URL already exists", success: false };
+    return { status: 201, message: "URL already exists", success: false };
   }
 }
 
@@ -138,7 +139,7 @@ async function editUrlFromDb({ id, newFullUrl }) {
     return value;
   }
 
-  return { status: 403, success: false, error: "URL already exists" };
+  return { status: 202, success: false, error: "URL already exists" };
 }
 
 async function deleteFromDb({ id }) {
