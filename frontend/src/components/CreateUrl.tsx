@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import Button from "./Button";
 import { generateShortUrl } from "../../API";
 import { toast } from "react-toastify";
+import InputField from "./InputField";
 
 const CreateUrl = () => {
   const [fullUrl, setFullUrl] = useState("");
@@ -37,13 +38,11 @@ const CreateUrl = () => {
           URL Shortner
         </h2>
         <div className="flex w-full">
-          <input
+          <InputField
             type="url"
             value={fullUrl}
-            onChange={(e) => setFullUrl(e.target.value)}
-            className="border mb-3 px-3 py-1 bg-transparent shadow-lg focus:outline-2 focus:outline-three w-full"
             placeholder="Enter your link here..."
-            required
+            onChange={(e) => setFullUrl(e.target.value)}
           />
           <input
             type="number"

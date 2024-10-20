@@ -77,14 +77,14 @@ async function createUser({ username, email, password }) {
     return value
       ? { status: 201, message: "Successfully created user", success: true }
       : {
-          status: 403,
-          message: value,
+          status: 207,
+          message: "Unable to create user profile",
           success: false,
         };
   } else if (usernameAvailable) {
-    return { status: 403, message: "username already exists", success: false };
+    return { status: 207, message: "username already exists", success: false };
   } else if (emailAvailable) {
-    return { status: 403, message: "email already exists", success: false };
+    return { status: 207, message: "email already exists", success: false };
   }
 }
 
@@ -99,7 +99,7 @@ async function loginUserProfile({ email, password }) {
   });
 
   if (!userRow) {
-    return { status: 404, message: "User not found", success: false };
+    return { status: 207, message: "User not found", success: false };
   } else if (userRow && (await bcrypt.compare(password, userRow.password))) {
     const accessToken = jwt.sign(
       {
@@ -115,7 +115,7 @@ async function loginUserProfile({ email, password }) {
 
     return { status: 200, message: "Successfully logged in", accessToken };
   } else {
-    return { status: 400, message: "Password doesn't match" };
+    return { status: 207, message: "Password doesn't match" };
   }
 }
 

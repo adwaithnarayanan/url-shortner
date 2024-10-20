@@ -22,23 +22,24 @@ const getUrls = asyncHandler(async (req, res) => {
 //@route POST /links
 //@access private
 const createUrl = asyncHandler(async (req, res) => {
-  const { url, urlLength } = req.body;
+  const { url, urlLength } = req.body.body;
   const user = req.user;
 
   if (!url) {
-    res.status(403);
+    res.status(207);
     throw new Error(`URL is mandatory`);
   }
+  console.log(1234);
 
   // check for whether a valid url
   if (!validUrl.isUri(url)) {
-    res.status(400);
+    res.status(207);
     throw new Error(`Provided is not a valid URL`);
   }
 
   // Check whether given url length is greater than 3
   if (Number(urlLength) < 3) {
-    res.status(400);
+    res.status(207);
     throw new Error(`Please provide minimum url length of 3 characters`);
   }
 
@@ -56,7 +57,7 @@ const createUrl = asyncHandler(async (req, res) => {
 //@access private
 const editUrl = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const newFullUrl = req.body.url;
+  const newFullUrl = req.body.body.url;
 
   const user = req.user;
 

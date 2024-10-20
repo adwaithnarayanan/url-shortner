@@ -6,6 +6,9 @@ import Navbar from "./components/Navbar";
 import { Route, Routes } from "react-router-dom";
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Signup from "./components/Signup";
+import Login from "./components/Login";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
 export const UrlContext = createContext({} as URLContextType);
 
@@ -15,11 +18,15 @@ function App() {
   return (
     <UrlContext.Provider value={{ urls, setUrls }}>
       <div className="min-h-screen w-full flex flex-col items-center bg-bodyBg">
-        <Navbar />
+        {<Navbar />}
 
         <Routes>
-          <Route path="/" element={<CreateUrl />} />
-          <Route path="show-urls" element={<ShowUrls />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/" element={<ProtectedRoutes />}>
+            <Route path="/" element={<CreateUrl />} />
+            <Route path="show-urls" element={<ShowUrls />} />
+          </Route>{" "}
         </Routes>
         <div className="absolute bottom-0 right-1/2 translate-x-2/4">
           <ToastContainer

@@ -1,26 +1,26 @@
 import { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Button from "./Button";
+import { useNavigate } from "react-router-dom";
 import InputField from "./InputField";
-import { signupUser } from "../../API";
+import { loginUser } from "../../API";
 import { toast } from "react-toastify";
 
-const Signup = () => {
+const Login = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignup = async (e: FormEvent) => {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
-    const response = await signupUser({ email, username, password });
+    const response = await loginUser({ email, password });
 
-    console.log("rsss", response);
-
-    if (response.success) {
-      toast.success("Succesfully created user");
+    if (response.status === 200) {
+      navigate("/");
+      toast.success("Successfully logged in", {});
+      setEmail("");
+      setPassword("");
     } else {
       toast.error(response.message);
     }
@@ -29,40 +29,36 @@ const Signup = () => {
   return (
     <div className="flex-1 w-full flex items-center justify-center">
       <form
-        onSubmit={handleSignup}
+        onSubmit={handleLogin}
         className="flex flex-col w-full max-w-[520px] shadow-lg px-9 py-8 bg-four items-center"
       >
         <h2 className="uppercase text-xl font-semibold text-primary my-2 w-full text-center">
-          create an account
+          Login
         </h2>
+
         <InputField
           type="email"
           placeholder="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <InputField
-          type="text"
-          placeholder="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+
         <InputField
           type="password"
           placeholder="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button type="submit">Signup</Button>
+        <Button type="submit">Login</Button>
         <div
           className="w-full text-end cursor-pointer mt-3 hover:underline hover:text-primary"
-          onClick={() => navigate("/login")}
+          onClick={() => navigate("/signup")}
         >
-          Already have an account?
+          Create an account
         </div>
       </form>
     </div>
   );
 };
 
-export default Signup;
+export default Login;
