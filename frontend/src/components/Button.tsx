@@ -4,9 +4,10 @@ type ButtonPropType = {
   type?: "submit" | "showUrls" | "edit" | "delete";
   children: React.ReactNode;
   handleClick?: () => void;
+  disabled?: boolean;
 };
 
-const Button = ({ type, children, handleClick }: ButtonPropType) => {
+const Button = ({ type, children, disabled, handleClick }: ButtonPropType) => {
   let btnStyle = "";
 
   if (type === "submit")
@@ -22,6 +23,7 @@ const Button = ({ type, children, handleClick }: ButtonPropType) => {
   return (
     <button
       type={type === "submit" ? type : "button"}
+      disabled={disabled ? disabled : false}
       onClick={handleClick}
       className={btnStyle}
     >

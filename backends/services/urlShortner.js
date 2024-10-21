@@ -1,6 +1,6 @@
 const POSSIBLE_URL =
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_?!%";
-// total length 66
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_";
+// total length 64
 
 function generateURl({ urlLength }) {
   let shortenedUrl = "";

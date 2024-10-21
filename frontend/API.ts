@@ -14,6 +14,8 @@ export const signupUser = async (userDetails: {
 
   return response;
 };
+// React query for api calls
+// Create and httpClient using axios instance
 
 export const loginUser = async (loginDetails: {
   email: string;

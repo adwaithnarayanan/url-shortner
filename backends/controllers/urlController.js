@@ -83,8 +83,9 @@ const deleteUrl = asyncHandler(async (req, res) => {
 
 //@desc get url
 //@route GET /:id
-//@access private
+//@access public
 const getUrl = asyncHandler(async (req, res) => {
+  console.log(1234);
   const encodedUrl = req.params.id;
   const response = await getLink({ encodedUrl });
 

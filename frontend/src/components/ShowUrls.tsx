@@ -1,5 +1,5 @@
 // import Button from "./Button";
-import { FormEvent, useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { deleteUrl, editUrl, getAllUrls } from "../../API.ts";
 import { UrlType } from "../../types.ts";
 import Table from "./Table.tsx";
@@ -14,10 +14,8 @@ const ShowUrls = () => {
     setUrls(data.data.map((url: UrlType[]) => ({ ...url, edit: false })));
   };
 
-  async function handleEditUrl(e: FormEvent, id: number, encodedUrl: string) {
-    e.preventDefault();
-
-    const response = await editUrl({ id: id, newShortUrl: encodedUrl });
+  async function handleEditUrl(values: { url: string; id: number }) {
+    const response = await editUrl({ id: values.id, newShortUrl: values.url });
 
     if (response.success) {
       toast.success(response.message, {

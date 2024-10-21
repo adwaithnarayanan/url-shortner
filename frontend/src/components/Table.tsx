@@ -2,13 +2,17 @@ import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import { UrlType } from "../../types";
 import Button from "./Button";
-import { FormEvent, useState } from "react";
-import { Slide, toast, Zoom } from "react-toastify";
+import { useRef } from "react";
+import { toast, Zoom } from "react-toastify";
+import { useFormik } from "formik";
+import { editUrlSchema } from "../schemas/schemas";
+
+const initialValues = { fullUrl: "" };
 
 type TablePropType = {
   urls: UrlType[];
   handleDeleteUrl: (id: number) => void;
-  handleEditUrl: (e: FormEvent, id: number, encodedUrl: string) => void;
+  handleEditUrl: (values: { url: string; id: number }) => void;
   handleEnableEditUrl: (id: number) => void;
 };
 
@@ -18,12 +22,20 @@ const Table = ({
   handleEditUrl,
   handleEnableEditUrl,
 }: TablePropType) => {
-  const [newFullUrl, setNewFullUrl] = useState("");
+  const idRef = useRef(0);
+  const { values, setValues, handleBlur, handleChange, handleSubmit, errors } =
+    useFormik({
+      initialValues,
+      onSubmit: (values) => {
+        handleEditUrl({ url: values.fullUrl, id: idRef.current });
+      },
+      validationSchema: editUrlSchema,
+    });
 
   const handleEdit = (id: number) => {
     const currentUrl = urls.find((url) => url.id === id);
+    setValues({ fullUrl: currentUrl?.fullUrl! });
 
-    setNewFullUrl(currentUrl?.fullUrl!);
     handleEnableEditUrl(id);
   };
 
@@ -71,19 +83,46 @@ const Table = ({
                     {url.encodedLink}
                   </span>
                 </td>
-                <td>
+                <td className="">
                   {url.edit ? (
                     <form
-                      onSubmit={(e) => handleEditUrl(e, url.id, newFullUrl)}
+                      className="flex flex-col relative justify-center"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        idRef.current = url.id;
+                        handleSubmit();
+                      }}
                     >
                       <input
-                        type="url"
-                        value={newFullUrl}
-                        onChange={(e) => setNewFullUrl(e.target.value)}
-                        className="w-ful border-2 border-primary focus:outline-2 focus:outline-primary text-[15px] bg-[rgba(255,255,255,0.3)] rounded-sm"
+                        type="text"
+                        placeholder="Enter URL here...."
+                        name="fullUrl"
+                        value={values.fullUrl}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        className={`w-full border-2 focus:outline-2  text-[15px] bg-[rgba(255,255,255,0.3)] rounded-sm px-1 ${
+                          errors.fullUrl
+                            ? "border-red-500 focus:outline-red-500"
+                            : "border-primary focus:outline-primary"
+                        }`}
                       />
+                      {errors.fullUrl && (
+                        <span className="text-red-700 text-xs w-full text-end absolute bottom-[-17px] right-1">
+                          {errors.fullUrl}
+                        </span>
+                      )}
                     </form>
                   ) : (
+                    // <form
+                    //   onSubmit={(e) => handleEditUrl(e, url.id, newFullUrl)}
+                    // >
+                    //   <input
+                    //     type="url"
+                    //     value={newFullUrl}
+                    //     onChange={(e) => setNewFullUrl(e.target.value)}
+                    //     className="w-ful border-2 border-primary focus:outline-2 focus:outline-primary text-[15px] bg-[rgba(255,255,255,0.3)] rounded-sm"
+                    //   />
+                    // </form>
                     <span>{url.fullUrl}</span>
                   )}
                 </td>

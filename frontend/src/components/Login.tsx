@@ -1,35 +1,53 @@
-import { FormEvent, useState } from "react";
 import Button from "./Button";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import InputField from "./InputField";
 import { loginUser } from "../../API";
 import { toast } from "react-toastify";
+import { useFormik } from "formik";
+import { loginSchema } from "../schemas/schemas";
+
+let navigate: NavigateFunction;
+
+const initialValues = {
+  email: "",
+  password: "",
+};
+
+const onSubmit = async (values: { email: string; password: string }) => {
+  const response = await loginUser({
+    email: values.email,
+    password: values.password,
+  });
+
+  if (response.status === 200) {
+    navigate("/");
+    toast.success("Successfully logged in", {});
+  } else {
+    toast.error(response.message);
+  }
+};
 
 const Login = () => {
-  const navigate = useNavigate();
+  navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleLogin = async (e: FormEvent) => {
-    e.preventDefault();
-
-    const response = await loginUser({ email, password });
-
-    if (response.status === 200) {
-      navigate("/");
-      toast.success("Successfully logged in", {});
-      setEmail("");
-      setPassword("");
-    } else {
-      toast.error(response.message);
-    }
-  };
+  const {
+    values,
+    isSubmitting,
+    errors,
+    touched,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+  } = useFormik({
+    initialValues,
+    validationSchema: loginSchema,
+    onSubmit,
+  });
 
   return (
     <div className="flex-1 w-full flex items-center justify-center">
       <form
-        onSubmit={handleLogin}
+        onSubmit={handleSubmit}
         className="flex flex-col w-full max-w-[520px] shadow-lg px-9 py-8 bg-four items-center"
       >
         <h2 className="uppercase text-xl font-semibold text-primary my-2 w-full text-center">
@@ -37,19 +55,29 @@ const Login = () => {
         </h2>
 
         <InputField
-          type="email"
+          type="text"
           placeholder="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          name="email"
+          value={values.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={errors.email}
+          touched={touched.email}
         />
 
         <InputField
           type="password"
           placeholder="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          name="password"
+          value={values.password}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={errors.password}
+          touched={touched.password}
         />
-        <Button type="submit">Login</Button>
+        <Button disabled={isSubmitting} type="submit">
+          Login
+        </Button>
         <div
           className="w-full text-end cursor-pointer mt-3 hover:underline hover:text-primary"
           onClick={() => navigate("/signup")}
