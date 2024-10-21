@@ -28,13 +28,15 @@ export const loginUser = async (loginDetails: {
     sessionStorage.setItem("accessToken", response.accessToken);
   }
 
-  // console.log(response);
   return response;
 };
 
 export const getAllUrls = async () => {
+  const accessToken = getAccessToken();
   const urls = await axios
-    .get(API_URL + "links/")
+    .get(API_URL + "links/", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
     .then((response) => response.data)
     .catch((err) => console.error("Error: ", err));
 
@@ -49,11 +51,12 @@ export const generateShortUrl = async ({
   urlLength: string;
 }) => {
   const accessToken = getAccessToken();
+
+  const data = { url: fullUrl, urlLength: urlLength };
+
   const response = await axios
-    .post(API_URL + "links/", {
+    .post(API_URL + "links/", data, {
       headers: { Authorization: `Bearer ${accessToken}` },
-      url: fullUrl,
-      urlLength: urlLength,
     })
     .then((response) => response.data);
 
@@ -67,16 +70,25 @@ export const editUrl = async ({
   id: number;
   newShortUrl: string;
 }) => {
+  const accessToken = getAccessToken();
+
   const response = await axios
-    .put(API_URL + `links/${id}`, { url: newShortUrl })
+    .put(
+      API_URL + `links/${id}`,
+      { url: newShortUrl },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    )
     .then((response) => response.data);
 
   return response;
 };
 
 export const deleteUrl = async ({ id }: { id: number }) => {
+  const accessToken = getAccessToken();
   const response = await axios
-    .delete(API_URL + `links/${id}`)
+    .delete(API_URL + `links/${id}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
     .then((response) => response.data);
 
   return response;

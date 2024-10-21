@@ -22,14 +22,13 @@ const getUrls = asyncHandler(async (req, res) => {
 //@route POST /links
 //@access private
 const createUrl = asyncHandler(async (req, res) => {
-  const { url, urlLength } = req.body.body;
+  const { url, urlLength } = req.body;
   const user = req.user;
 
   if (!url) {
     res.status(207);
     throw new Error(`URL is mandatory`);
   }
-  console.log(1234);
 
   // check for whether a valid url
   if (!validUrl.isUri(url)) {
@@ -57,7 +56,7 @@ const createUrl = asyncHandler(async (req, res) => {
 //@access private
 const editUrl = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const newFullUrl = req.body.body.url;
+  const newFullUrl = req.body.url;
 
   const user = req.user;
 

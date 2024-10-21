@@ -3,12 +3,10 @@ import jwt from "jsonwebtoken";
 
 const validateToken = asyncHandler(async (req, res, next) => {
   let token;
-  let authHeader =
-    req.body.headers.Authorization || req.body.headers.authorization;
+  let authHeader = req.headers.Authorization || req.headers.authorization;
 
   if (authHeader && authHeader.startsWith("Bearer")) {
     token = authHeader.split(" ")[1].trim();
-    console.log("******", token);
     try {
       jwt.verify(
         token,
@@ -24,7 +22,7 @@ const validateToken = asyncHandler(async (req, res, next) => {
         }
       );
     } catch (err) {
-      console.log("*****", err);
+      console.log("***Error", err);
     }
     if (!token) {
       res.status(207);

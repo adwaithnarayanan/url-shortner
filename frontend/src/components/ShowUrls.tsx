@@ -28,7 +28,6 @@ const ShowUrls = () => {
     }
 
     await displayUrls();
-    console.log("urrlsss edit", urls);
   }
 
   const handleDeleteUrl = async (id: number) => {

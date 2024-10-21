@@ -4,7 +4,7 @@ import ShowUrls from "./components/ShowUrls";
 import { URLContextType, UrlType } from "../types";
 import Navbar from "./components/Navbar";
 import { Route, Routes } from "react-router-dom";
-import { Bounce, ToastContainer } from "react-toastify";
+import { Bounce, ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
@@ -41,7 +41,7 @@ function App() {
             draggable={false}
             pauseOnHover={false}
             theme="light"
-            transition={Bounce}
+            transition={Zoom}
           />
         </div>
       </div>

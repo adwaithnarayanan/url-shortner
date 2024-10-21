@@ -54,13 +54,6 @@ async function createUser({ username, email, password }) {
   const usernameAvailable = await checkUserAvailable({ username });
   const emailAvailable = await checkEmailAvailable({ email });
 
-  console.log(
-    "isUsername available ",
-    usernameAvailable,
-    " ||  is email available ",
-    emailAvailable
-  );
-
   if (!usernameAvailable && !emailAvailable) {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
@@ -110,7 +103,7 @@ async function loginUserProfile({ email, password }) {
         },
       },
       `${process.env.ACCESS_TOKEN_SECRET}`,
-      { expiresIn: "5min" }
+      { expiresIn: "100min" }
     );
 
     return { status: 200, message: "Successfully logged in", accessToken };
@@ -163,8 +156,7 @@ async function insertIntoDB({ fullUrl, urlLength, userId }) {
           if (err) {
             return { status: 403, success: false, error: err };
           } else {
-            console.log("Successfully inserted into db", shortenedUrl, fullUrl);
-
+            console.log("Successfully inserted into db");
             resolve(true);
           }
         }

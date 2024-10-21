@@ -13,7 +13,6 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const resposne = await createUser({ username, email, password });
-  console.log("register user response ", resposne);
   res.status(resposne.status).json(resposne);
 });
 
@@ -30,7 +29,6 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const response = await loginUserProfile({ email, password });
-  console.log("login user response ", response);
 
   res.status(response.status).json(response);
 });

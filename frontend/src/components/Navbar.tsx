@@ -8,7 +8,10 @@ const NAV_LINKS = [
 const Navbar = () => {
   const navigate = useNavigate();
   const auth = sessionStorage.getItem("accessToken");
-  const handleLogout = () => {};
+  const handleLogout = () => {
+    sessionStorage.clear();
+    window.location.reload();
+  };
 
   return (
     <nav className="w-full bg-secondary text-four flex justify-between py-2">

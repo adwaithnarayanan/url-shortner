@@ -17,8 +17,6 @@ const Signup = () => {
 
     const response = await signupUser({ email, username, password });
 
-    console.log("rsss", response);
-
     if (response.success) {
       toast.success("Succesfully created user");
     } else {
