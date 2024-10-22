@@ -1,72 +1,35 @@
 // import Button from "./Button";
-import { useContext, useEffect } from "react";
-import { deleteUrl, editUrl, getAllUrls } from "../../API.ts";
-import { UrlType } from "../../types.ts";
 import Table from "./Table.tsx";
-import { UrlContext } from "../App.tsx";
-import { toast } from "react-toastify";
+import { useDeleteUrl } from "../hooks/APIs/useDeleteUrl.ts";
+import { useEditUrl } from "../hooks/APIs/useEditUrl.ts";
+import { useGetAllUrls } from "../hooks/APIs/useGetAllUrl.ts";
 
 const ShowUrls = () => {
-  const { urls, setUrls } = useContext(UrlContext);
+  const { data, isSuccess } = useGetAllUrls();
 
-  const displayUrls = async () => {
-    const data = await getAllUrls();
-    setUrls(data.data.map((url: UrlType[]) => ({ ...url, edit: false })));
-  };
+  const { mutate } = useEditUrl();
+
+  const { mutate: deleteUrlMutate } = useDeleteUrl();
 
   async function handleEditUrl(values: { url: string; id: number }) {
-    const response = await editUrl({ id: values.id, newShortUrl: values.url });
-
-    if (response.success) {
-      toast.success(response.message, {
-        position: "bottom-center",
-      });
-    } else {
-      toast.info(response.message, {});
-    }
-
-    await displayUrls();
+    mutate({ id: values.id, newShortUrl: values.url });
   }
 
   const handleDeleteUrl = async (id: number) => {
-    const response = await deleteUrl({ id });
-
-    if (response.success) {
-      toast.success(response.message);
-    } else {
-      toast.info(response.message);
-    }
-
-    await displayUrls();
+    deleteUrlMutate({ id: id });
   };
-
-  const handleEnableEditUrl = (id: number) => {
-    setUrls((prevUrls) =>
-      prevUrls.map((prevUrl) =>
-        prevUrl.id === id
-          ? { ...prevUrl, edit: !prevUrl.edit }
-          : { ...prevUrl, edit: false }
-      )
-    );
-  };
-
-  useEffect(() => {
-    displayUrls();
-  }, []);
 
   return (
     <>
       <div className="flex flex-col items-center mt-10 shadow-lg p-3 rounded-md">
-        {/* <Button handleClick={displayUrls} type="showUrls">
-        Show Urls
-      </Button> */}
         <div>
-          <Table
-            urls={urls}
-            handleDeleteUrl={handleDeleteUrl}
-            handleEditUrl={handleEditUrl}
-            handleEnableEditUrl={handleEnableEditUrl}
-          />
+          {data && isSuccess && (
+            <Table
+              urls={data.data}
+              handleDeleteUrl={handleDeleteUrl}
+              handleEditUrl={handleEditUrl}
+            />
+          )}
         </div>
       </div>
     </>

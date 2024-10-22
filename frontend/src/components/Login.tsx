@@ -1,10 +1,9 @@
 import Button from "./Button";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import InputField from "./InputField";
-import { loginUser } from "../../API";
-import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import { loginSchema } from "../schemas/schemas";
+import { useLoginUser } from "../hooks/APIs/useLoginUser";
 
 let navigate: NavigateFunction;
 
@@ -13,21 +12,8 @@ const initialValues = {
   password: "",
 };
 
-const onSubmit = async (values: { email: string; password: string }) => {
-  const response = await loginUser({
-    email: values.email,
-    password: values.password,
-  });
-
-  if (response.status === 200) {
-    navigate("/");
-    toast.success("Successfully logged in", {});
-  } else {
-    toast.error(response.message);
-  }
-};
-
 const Login = () => {
+  const { mutate } = useLoginUser();
   navigate = useNavigate();
 
   const {
@@ -41,7 +27,7 @@ const Login = () => {
   } = useFormik({
     initialValues,
     validationSchema: loginSchema,
-    onSubmit,
+    onSubmit: (values) => mutate(values),
   });
 
   return (

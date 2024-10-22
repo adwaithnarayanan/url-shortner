@@ -77,7 +77,7 @@ async function createUser({ username, email, password }) {
   } else if (usernameAvailable) {
     return { status: 207, message: "username already exists", success: false };
   } else if (emailAvailable) {
-    return { status: 207, message: "email already exists", success: false };
+    return { status: 403, message: "email already exists", success: false };
   }
 }
 

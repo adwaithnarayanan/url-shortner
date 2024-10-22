@@ -1,30 +1,18 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:8000/";
+import { apiClient } from "./src/httpClient/httpClient";
 
 export const signupUser = async (userDetails: {
   username: string;
   email: string;
   password: string;
 }) => {
-  const response = await axios
-    .post(API_URL + "users/register/", userDetails)
-    .then((response) => response.data)
-    .catch((err) => console.log("##****", err));
-
-  return response;
+  return (await apiClient.post("users/register/", userDetails)).data;
 };
-// React query for api calls
-// Create and httpClient using axios instance
 
 export const loginUser = async (loginDetails: {
   email: string;
   password: string;
 }) => {
-  const response = await axios
-    .post(API_URL + "users/login/", loginDetails)
-    .then((response) => response.data)
-    .catch((err) => console.log("###**", err));
+  const response = (await apiClient.post("/users/login/", loginDetails)).data;
 
   if (response.status === 200 && response.accessToken) {
     sessionStorage.setItem("accessToken", response.accessToken);
@@ -35,14 +23,12 @@ export const loginUser = async (loginDetails: {
 
 export const getAllUrls = async () => {
   const accessToken = getAccessToken();
-  const urls = await axios
-    .get(API_URL + "links/", {
+
+  return (
+    await apiClient.get("/links", {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
-    .then((response) => response.data)
-    .catch((err) => console.error("Error: ", err));
-
-  return urls;
+  ).data;
 };
 
 export const generateShortUrl = async ({
@@ -56,13 +42,11 @@ export const generateShortUrl = async ({
 
   const data = { url: fullUrl, urlLength: urlLength };
 
-  const response = await axios
-    .post(API_URL + "links/", data, {
+  return (
+    await apiClient.post("/links/", data, {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
-    .then((response) => response.data);
-
-  return response;
+  ).data;
 };
 
 export const editUrl = async ({
@@ -74,26 +58,22 @@ export const editUrl = async ({
 }) => {
   const accessToken = getAccessToken();
 
-  const response = await axios
-    .put(
-      API_URL + `links/${id}`,
+  return (
+    await apiClient.put(
+      `links/${id}`,
       { url: newShortUrl },
       { headers: { Authorization: `Bearer ${accessToken}` } }
     )
-    .then((response) => response.data);
-
-  return response;
+  ).data;
 };
 
 export const deleteUrl = async ({ id }: { id: number }) => {
   const accessToken = getAccessToken();
-  const response = await axios
-    .delete(API_URL + `links/${id}`, {
+  return (
+    await apiClient.delete(`links/${id}`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
-    .then((response) => response.data);
-
-  return response;
+  ).data;
 };
 
 function getAccessToken() {
