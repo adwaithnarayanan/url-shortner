@@ -18,16 +18,22 @@ const Login = () => {
 
   const {
     values,
-    isSubmitting,
     errors,
     touched,
     handleBlur,
     handleChange,
     handleSubmit,
+    isSubmitting,
+    setSubmitting,
   } = useFormik({
     initialValues,
     validationSchema: loginSchema,
-    onSubmit: (values) => mutate(values),
+    onSubmit: (values) => {
+      mutate(values);
+      setTimeout(() => {
+        setSubmitting(false);
+      }, 1000);
+    },
   });
 
   return (

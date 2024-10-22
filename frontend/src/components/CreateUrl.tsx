@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import InputField from "./InputField";
 import { FormikState, useFormik } from "formik";
 import { createUrlSchema } from "../schemas/schemas";
+import { useGenerateShortUrl } from "../hooks/APIs/useGenerateShortUrl";
 
 type resetFormType = {
   resetForm: (
@@ -45,14 +46,17 @@ const onSubmit = async (
 };
 
 const CreateUrl = () => {
+  const { mutate } = useGenerateShortUrl();
+
   const {
     values,
-    isSubmitting,
     errors,
     touched,
     handleBlur,
     handleChange,
     handleSubmit,
+    isSubmitting,
+    setSubmitting,
   } = useFormik({
     initialValues,
     validationSchema: createUrlSchema,

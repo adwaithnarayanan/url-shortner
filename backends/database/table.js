@@ -70,12 +70,12 @@ async function createUser({ username, email, password }) {
     return value
       ? { status: 201, message: "Successfully created user", success: true }
       : {
-          status: 207,
+          status: 403,
           message: "Unable to create user profile",
           success: false,
         };
   } else if (usernameAvailable) {
-    return { status: 207, message: "username already exists", success: false };
+    return { status: 403, message: "username already exists", success: false };
   } else if (emailAvailable) {
     return { status: 403, message: "email already exists", success: false };
   }
@@ -92,7 +92,7 @@ async function loginUserProfile({ email, password }) {
   });
 
   if (!userRow) {
-    return { status: 207, message: "User not found", success: false };
+    return { status: 403, message: "User not found", success: false };
   } else if (userRow && (await bcrypt.compare(password, userRow.password))) {
     const accessToken = jwt.sign(
       {
@@ -108,7 +108,7 @@ async function loginUserProfile({ email, password }) {
 
     return { status: 200, message: "Successfully logged in", accessToken };
   } else {
-    return { status: 207, message: "Password doesn't match" };
+    return { status: 403, message: "Password doesn't match" };
   }
 }
 
@@ -201,27 +201,22 @@ async function editUrlFromDb({ id, newFullUrl, userId }) {
     const query = `UPDATE urls SET fullUrl=? WHERE id=? AND userId=?`;
 
     const value = await new Promise((resolve) => {
-      db.run(
-        query,
-        // [newShortenedUrl, `http://localhost:8000/${newShortenedUrl}`, id],
-        [newFullUrl, id, userId],
-        (err) => {
-          if (err) {
-            resolve({ status: 403, message: err, success: false });
-          }
-          resolve({
-            status: 200,
-            message: "Successfully updated URL",
-            success: true,
-          });
+      db.run(query, [newFullUrl, id, userId], (err) => {
+        if (err) {
+          resolve({ status: 403, message: err, success: false });
         }
-      );
+        resolve({
+          status: 200,
+          message: "Successfully updated URL",
+          success: true,
+        });
+      });
     });
 
     return value;
+  } else {
+    return { status: 403, success: false, message: "URL already exists" };
   }
-
-  return { status: 202, success: false, error: "URL already exists" };
 }
 
 async function deleteFromDb({ id, userId }) {

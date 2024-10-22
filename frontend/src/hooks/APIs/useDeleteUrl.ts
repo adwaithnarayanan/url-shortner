@@ -15,11 +15,6 @@ const useDeleteUrl = () => {
         position: "bottom-center",
       });
     },
-    onSettled: (message) => {
-      toast.info(message.message, {
-        position: "bottom-center",
-      });
-    },
   });
 };
 

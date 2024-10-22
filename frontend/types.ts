@@ -11,3 +11,11 @@ export type URLContextType = {
   urls: UrlType[];
   setUrls: React.Dispatch<React.SetStateAction<UrlType[]>>;
 };
+
+export type ErrorType = {
+  response: {
+    data: {
+      message: string;
+    };
+  };
+};

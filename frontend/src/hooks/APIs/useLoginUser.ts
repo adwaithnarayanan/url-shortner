@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "../../../API";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ErrorType } from "../../../types";
 
 export const useLoginUser = () => {
   const navigate = useNavigate();
@@ -12,11 +13,8 @@ export const useLoginUser = () => {
       navigate("/");
       toast.success(`Successfully logged in `, {});
     },
-    onError: (err) => {
-      toast.error(err.message || "Unable to login");
-    },
-    onSettled: (message) => {
-      toast.info(message.message, {});
+    onError: (err: ErrorType) => {
+      toast.error(err?.response?.data?.message || "Unable to login");
     },
   });
 };

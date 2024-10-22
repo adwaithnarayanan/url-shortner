@@ -13,14 +13,15 @@ type FullUrlFieldPropsType = {
 const FullUrlField = ({ url, handleEditUrl }: FullUrlFieldPropsType) => {
   const [editUrl, setEditUrl] = useState(false);
 
-  const { values, handleBlur, handleChange, handleSubmit, errors } = useFormik({
-    initialValues: { fullUrl: url.fullUrl },
-    onSubmit: (values) => {
-      handleEditUrl({ url: values.fullUrl, id: url.id });
-      setEditUrl(false);
-    },
-    validationSchema: editUrlSchema,
-  });
+  const { values, handleBlur, handleChange, handleSubmit, errors, setValues } =
+    useFormik({
+      initialValues: { fullUrl: url.fullUrl },
+      onSubmit: (values) => {
+        handleEditUrl({ url: values.fullUrl, id: url.id });
+        setEditUrl(false);
+      },
+      validationSchema: editUrlSchema,
+    });
 
   useEffect(() => {
     return () => {
@@ -63,7 +64,13 @@ const FullUrlField = ({ url, handleEditUrl }: FullUrlFieldPropsType) => {
         )}
       </td>
       <td className="py-1.5">
-        <Button handleClick={() => setEditUrl((prev) => !prev)} type="edit">
+        <Button
+          handleClick={() => {
+            setValues({ fullUrl: url.fullUrl });
+            setEditUrl((prev) => !prev);
+          }}
+          type="edit"
+        >
           <ModeEditOutlinedIcon />
         </Button>
       </td>

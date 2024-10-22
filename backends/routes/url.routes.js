@@ -13,6 +13,7 @@ urlRouter
   .route("/links/")
   .get(validateToken, getUrls)
   .post(validateToken, createUrl);
+
 urlRouter
   .route("/links/:id")
   .put(validateToken, editUrl)

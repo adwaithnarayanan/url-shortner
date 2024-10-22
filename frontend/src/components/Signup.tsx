@@ -19,19 +19,12 @@ const Signup = () => {
 
   const { mutate } = useSignupUser();
 
-  const {
-    values,
-    handleBlur,
-    handleChange,
-    handleSubmit,
-    isSubmitting,
-    errors,
-    touched,
-  } = useFormik({
-    initialValues,
-    validationSchema: signupSchema,
-    onSubmit: (values) => mutate(values),
-  });
+  const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
+    useFormik({
+      initialValues,
+      validationSchema: signupSchema,
+      onSubmit: (values) => mutate(values),
+    });
 
   return (
     <>
@@ -84,9 +77,7 @@ const Signup = () => {
             touched={touched.confirmPassword}
           />
 
-          <Button disabled={isSubmitting} type="submit">
-            Signup
-          </Button>
+          <Button type="submit">Signup</Button>
           <div
             className="w-full text-end cursor-pointer mt-3 hover:underline hover:text-primary"
             onClick={() => navigate("/login")}
