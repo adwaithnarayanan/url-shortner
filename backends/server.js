@@ -1,5 +1,5 @@
 import express from "express";
-import dotenv from "dotenv";
+import "dotenv/config";
 import { urlRouter } from "./routes/url.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import cors from "cors";
