@@ -21,3 +21,5 @@ urlRouter
 urlRouter.route("/:id").get(getUrl);
 
 export { urlRouter };
+
+// http://localhost:3000/<shortUrl>
