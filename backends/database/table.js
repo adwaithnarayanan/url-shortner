@@ -3,7 +3,7 @@ import { generateURl } from "../services/urlShortner.js";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../constants.js";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import "dotenv/config";
 
 const db = new sqlite.Database(
   "url.db",
