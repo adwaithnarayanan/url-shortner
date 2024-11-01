@@ -1,7 +1,6 @@
 import * as yup from "yup";
 
 const emailExprssion = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-z]{2,}$/;
-// const usernameExpression = /[^-\s]/;
 const usernameExpression = /^\S+$/;
 const passwordExpresssion =
   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]{5,}$/;
