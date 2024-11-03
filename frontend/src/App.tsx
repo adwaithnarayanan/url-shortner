@@ -4,7 +4,7 @@ import ShowUrls from "./components/ShowUrls";
 import { URLContextType, UrlType } from "../types";
 import Navbar from "./components/Navbar";
 import { Route, Routes } from "react-router-dom";
-import { Bounce, ToastContainer, Zoom } from "react-toastify";
+import { ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Signup from "./components/Signup";
 import Login from "./components/Login";

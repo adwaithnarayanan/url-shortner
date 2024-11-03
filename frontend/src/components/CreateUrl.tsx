@@ -1,48 +1,12 @@
 import Button from "./Button";
-import { generateShortUrl } from "../../API";
-import { toast } from "react-toastify";
 import InputField from "./InputField";
-import { FormikState, useFormik } from "formik";
+import { useFormik } from "formik";
 import { createUrlSchema } from "../schemas/schemas";
 import { useGenerateShortUrl } from "../hooks/APIs/useGenerateShortUrl";
-
-type resetFormType = {
-  resetForm: (
-    nextState?:
-      | Partial<
-          FormikState<{
-            fullUrl: string;
-            encodedLength: string;
-          }>
-        >
-      | undefined
-  ) => void;
-};
 
 const initialValues = {
   fullUrl: "",
   encodedLength: "",
-};
-
-const onSubmit = async (
-  values: { fullUrl: string; encodedLength: string },
-  { resetForm }: resetFormType
-) => {
-  const response = await generateShortUrl({
-    fullUrl: values.fullUrl.trim(),
-    urlLength: values.encodedLength.toString(),
-  });
-
-  if (response.success) {
-    resetForm();
-    toast.success(response.message, {
-      position: "bottom-center",
-      autoClose: 3000,
-      hideProgressBar: false,
-    });
-  } else {
-    toast.info(response.message, {});
-  }
 };
 
 const CreateUrl = () => {
@@ -56,11 +20,13 @@ const CreateUrl = () => {
     handleChange,
     handleSubmit,
     isSubmitting,
-    setSubmitting,
   } = useFormik({
     initialValues,
     validationSchema: createUrlSchema,
-    onSubmit,
+    onSubmit: (values) => {
+      console.log(values);
+      mutate({ fullUrl: values.fullUrl, urlLength: values.encodedLength });
+    },
   });
 
   return (
